@@ -17,3 +17,5 @@ videos/
 
 # Archivos del sistema
 .DS_Store
+
+.api_keys.py
