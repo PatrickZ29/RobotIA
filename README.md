@@ -30,6 +30,7 @@ The system records aggressiveness, condition, damage, and control scores for bot
   </a>
 </p>
 <p align="center"><em>Full demonstration video of the system's operation</em></p>
+
 ---
  
 ## 🔌 System Architecture
@@ -59,10 +60,11 @@ The system is organized into seven layers, designed to reduce coupling between d
   <img src="assets/arena-layout.png" width="75%" alt="Physical layout of the modules in the combat arena">
 </p>
 <p align="center"><em>Figure 2. Placement of operator terminals, Juez Bot (mobile camera unit), the referee station, and the official timer, with ESP-NOW links.</em></p>
-- The two **operator terminals** are located at the outer corners of the arena.
-- **Juez Bot**, the mobile capture unit (Sphero RVR+ + Raspberry Pi Zero 2 W + camera), is positioned at an inner corner with a clear line of sight over the entire match.
-- The **referee module** (M5Stack Core2) and the **official timer** are located next to the referee's station, connected via serial communication.
-- All field links use **ESP-NOW**, without relying on the local WiFi network.
+- The two **operator terminals** are positioned at opposite outer corners of the arena.
+- **Juez Bot**, the mobile capture unit (Sphero RVR+ + Raspberry Pi Zero 2 W + camera), is placed at an inner corner with a clear view of the entire combat area.
+- The **referee module** (M5Stack Core2) and the **official timer** are located at the referee's station and communicate through a serial connection.
+- Communication between all field devices is performed using **ESP-NOW**, eliminating the need for the local Wi-Fi network.
+
 ---
  
 ## 🧠 Multimodal Inference Flow
@@ -81,6 +83,7 @@ The system is organized into seven layers, designed to reduce coupling between d
 8. **Persistence** — stored in PostgreSQL, with the full original response for traceability.
 9. **Web presentation** of the result.
 10. **Referee confirmation** — final human decision.
+
 ---
  
 ## 🧩 Technologies Used
