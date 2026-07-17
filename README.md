@@ -13,7 +13,9 @@
  
 ## 📌 Project Description
  
-**Juez Bot** is an integrated multimodal decision-support system for combat robotics matches designed to support referees in evaluating matches that do not end by knockout (KO) or submission. The system analyzes combat videos, images, and referee inputs to assess aggressiveness, condition, damage, and control for both robots, proposes a winner, and generates a technical justification based on the competition rules. It integrates field terminals, a portable referee module, an official timer, a mobile capture unit, a web application, a backend, a database, and a multimodal AI inference service into a single traceable workflow, while ensuring that the final decision always remains with the human referee through a human-in-the-loop approach.
+**Juez Bot** ("Robot Judge") is an integrated multimodal decision-support system for combat robotics matches, published as a scientific paper in *IEEE Access*. Its goal is to reduce subjectivity in decision-making when a match does not end by *knockout* (KO) or submission, by combining field terminals, a portable referee module, an official timer, a mobile capture unit, a web application, a backend, a database, and a multimodal inference service into a single traceable workflow.
+ 
+The system records aggressiveness, condition, damage, and control scores for both robots, along with the proposed winner and a technical justification, always subject to human confirmation by the referee (*human-in-the-loop*).
  
 ---
  
@@ -336,6 +338,13 @@ videos/
 - [ ] Understandable appeal and review mechanisms for competitors and organizers.
 ---
  
+## 📰 Media Coverage
+ 
+Juez Bot was featured live during the **IEEE Pumabot 2026** event broadcast, where the system was showcased in operation as part of the competition coverage.
+ 
+- 🔴 Live broadcast: [IEEE Pumabot 2026](https://www.youtube.com/live/YeUxeRvV5Bw?t=5909s)
+---
+ 
 ## 👤 Author
  
 **Patrick Neil Zamora Lascano**
@@ -349,3 +358,4 @@ Information Technology Engineering Program
 This project was developed for academic purposes as part of the degree thesis related to the intelligent refereeing system for combat robotics, validated during the **IEEE Pumabot 2026** event.
  
 ⭐ Academic project in applied multimodal AI, IoT, and intelligent sports refereeing
+ 
