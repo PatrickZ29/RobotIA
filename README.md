@@ -1,324 +1,313 @@
 🥊 Juez Bot
-### Sistema Multimodal Integrado para Arbitraje Asistido por IA en Robótica de Combate
-
+### Integrated Multimodal System for AI-Assisted Refereeing in Combat Robotics
+ 
 [![Version](https://img.shields.io/badge/Version-1.0-blue?style=for-the-badge)]()
 [![Backend](https://img.shields.io/badge/API-FastAPI-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![IA](https://img.shields.io/badge/IA-Gemini_2.5_Flash-4285F4?style=for-the-badge)]()
+[![IA](https://img.shields.io/badge/AI-Gemini_2.5_Flash-4285F4?style=for-the-badge)]()
 [![Database](https://img.shields.io/badge/Database-PostgreSQL-336791?style=for-the-badge&logo=postgresql)]()
 [![Hardware](https://img.shields.io/badge/Hardware-Raspberry_Pi_Zero_2W-C51A4A?style=for-the-badge&logo=raspberry-pi)]()
 [![M5Stack](https://img.shields.io/badge/M5Stack-ESP--NOW-orange?style=for-the-badge)]()
-[![Paper](https://img.shields.io/badge/IEEE_Access-Publicado-00629B?style=for-the-badge)]()
-
+[![Paper](https://img.shields.io/badge/IEEE_Access-Published-00629B?style=for-the-badge)]()
+ 
 ---
-
-## 📌 Descripción del Proyecto
-
-**Juez Bot** es un sistema multimodal integrado de apoyo al arbitraje para combates de robótica, publicado como artículo científico en *IEEE Access*. Su objetivo es reducir la subjetividad en la toma de decisiones cuando un combate no termina por *knockout* (KO) o rendición, combinando terminales de campo, un módulo portátil de árbitro, un temporizador oficial, una unidad móvil de captura, una aplicación web, un backend, una base de datos y un servicio de inferencia multimodal en un flujo de trabajo trazable.
-
-El sistema conserva las puntuaciones de agresividad, condición, daño y control para ambos robots, junto con el ganador propuesto y una justificación técnica, siempre sujeta a confirmación humana del árbitro (*human-in-the-loop*).
-
+ 
+## 📌 Project Description
+ 
+**Juez Bot** is an integrated multimodal decision-support system for combat robotics matches designed to support referees in evaluating matches that do not end by knockout (KO) or submission. The system analyzes combat videos, images, and referee inputs to assess aggressiveness, condition, damage, and control for both robots, proposes a winner, and generates a technical justification based on the competition rules. It integrates field terminals, a portable referee module, an official timer, a mobile capture unit, a web application, a backend, a database, and a multimodal AI inference service into a single traceable workflow, while ensuring that the final decision always remains with the human referee through a human-in-the-loop approach.
+ 
 ---
-
-## 🖼️ Vista Rápida del Sistema
-
+ 
+## 🖼️ Quick System Overview
+ 
 <p align="center">
-  <img src="assets/demo.gif" width="80%" alt="Demostración GIF del sistema Juez Bot">
+  <img src="assets/demo.gif" width="80%" alt="Juez Bot system demonstration GIF">
 </p>
-
 <p align="center">
   <a href="https://youtu.be/RK5Msci8DQw" target="_blank">
-    <img src="https://img.youtube.com/vi/RK5Msci8DQw/hqdefault.jpg" width="75%" alt="Video demostrativo de Juez Bot">
+    <img src="https://img.youtube.com/vi/RK5Msci8DQw/hqdefault.jpg" width="75%" alt="Juez Bot demonstration video">
   </a>
 </p>
-
-<p align="center"><em>Video demostrativo completo del funcionamiento del sistema</em></p>
-
+<p align="center"><em>Full demonstration video of the system's operation</em></p>
 ---
-
-## 🔌 Arquitectura del Sistema
-
+ 
+## 🔌 System Architecture
+ 
 <p align="center">
-  <img src="assets/architecture.png" width="85%" alt="Arquitectura por capas de Juez Bot">
+  <img src="assets/architecture.png" width="85%" alt="Layered architecture of Juez Bot">
 </p>
-<p align="center"><em>Figura 1. Arquitectura por capas: dispositivos de campo, captura, servicios, persistencia e inferencia con IA.</em></p>
-
-El sistema se organiza en siete capas, diseñadas para reducir el acoplamiento entre dispositivos y permitir reemplazar componentes sin modificar todo el flujo:
-
-| Capa | Componente | Tecnología | Responsabilidad principal |
+<p align="center"><em>Figure 1. Layered architecture: field devices, capture, services, persistence, and AI inference.</em></p>
+The system is organized into seven layers, designed to reduce coupling between devices and allow components to be replaced without modifying the entire flow:
+ 
+| Layer | Component | Technology | Main responsibility |
 |---|---|---|---|
-| Operadores | Terminal A y Terminal B | AtomS3, botones físicos | Confirmar estado *listo*, solicitar intervención y transmitir eventos al árbitro |
-| Control de árbitro | Módulo de árbitro | M5Stack Core2, UIFlow, MicroPython | Iniciar, pausar, reanudar y detener el combate; recibir estados y mostrar alertas |
-| Temporización | Temporizador oficial | Python, PyQt5 | Mostrar el tiempo reglamentario y ejecutar comandos del módulo de árbitro |
-| Adquisición | Juez Bot (unidad móvil) | Sphero RVR+, Raspberry Pi Zero 2 W, cámara, FFmpeg | Capturar video, controlar segmentos de grabación y transferir el archivo al backend |
-| Servicios | Backend | FastAPI, Uvicorn, Pydantic, HTTPX | Exponer endpoints, validar solicitudes y coordinar archivos, inferencia y persistencia |
-| Presentación | Aplicación web | Jinja2, HTML, CSS, JavaScript | Registrar robots, cargar imágenes, ejecutar análisis, consultar historial |
-| Persistencia | Base de datos | PostgreSQL, psycopg2 | Almacenar combates, evidencia, tiempos de proceso, puntuaciones y decisiones |
-| Inferencia | Motor multimodal | Gemini 2.5 Flash vía REST API | Evaluar video e imágenes de referencia según los criterios de arbitraje |
-
+| Operators | Terminal A and Terminal B | AtomS3, physical buttons | Confirm *ready* state, request intervention, and transmit events to the referee |
+| Referee control | Referee module | M5Stack Core2, UIFlow, MicroPython | Start, pause, resume, and stop the match; receive states and display alerts |
+| Timing | Official timer | Python, PyQt5 | Display regulation time and execute commands from the referee module |
+| Acquisition | Juez Bot (mobile unit) | Sphero RVR+, Raspberry Pi Zero 2 W, camera, FFmpeg | Capture video, control recording segments, and transfer the file to the backend |
+| Services | Backend | FastAPI, Uvicorn, Pydantic, HTTPX | Expose endpoints, validate requests, and coordinate files, inference, and persistence |
+| Presentation | Web application | Jinja2, HTML, CSS, JavaScript | Register robots, upload images, run analysis, query history |
+| Persistence | Database | PostgreSQL, psycopg2 | Store matches, evidence, processing times, scores, and decisions |
+| Inference | Multimodal engine | Gemini 2.5 Flash via REST API | Evaluate video and reference images according to refereeing criteria |
+ 
 ---
-
-## 🏟️ Disposición Física en la Arena
-
+ 
+## 🏟️ Physical Layout in the Arena
+ 
 <p align="center">
-  <img src="assets/arena-layout.png" width="75%" alt="Disposición física de los módulos en la arena de combate">
+  <img src="assets/arena-layout.png" width="75%" alt="Physical layout of the modules in the combat arena">
 </p>
-<p align="center"><em>Figura 2. Ubicación de terminales de operador, Juez Bot (unidad móvil de cámara), estación del árbitro y temporizador oficial, con enlaces ESP-NOW.</em></p>
-
-- Los dos **terminales de operador** se ubican en las esquinas externas de la arena.
-- **Juez Bot**, la unidad móvil de captura (Sphero RVR+ + Raspberry Pi Zero 2 W + cámara), se posiciona en una esquina interna con línea de visión sobre todo el combate.
-- El **módulo de árbitro** (M5Stack Core2) y el **temporizador oficial** se ubican junto a la estación del árbitro, conectados por comunicación serial.
-- Todos los enlaces de campo usan **ESP-NOW**, sin depender de la red WiFi local.
-
+<p align="center"><em>Figure 2. Placement of operator terminals, Juez Bot (mobile camera unit), the referee station, and the official timer, with ESP-NOW links.</em></p>
+- The two **operator terminals** are located at the outer corners of the arena.
+- **Juez Bot**, the mobile capture unit (Sphero RVR+ + Raspberry Pi Zero 2 W + camera), is positioned at an inner corner with a clear line of sight over the entire match.
+- The **referee module** (M5Stack Core2) and the **official timer** are located next to the referee's station, connected via serial communication.
+- All field links use **ESP-NOW**, without relying on the local WiFi network.
 ---
-
-## 🧠 Flujo de Inferencia Multimodal
-
+ 
+## 🧠 Multimodal Inference Flow
+ 
 <p align="center">
-  <img src="assets/inference-workflow.png" width="70%" alt="Flujo de inferencia multimodal de Juez Bot">
+  <img src="assets/inference-workflow.png" width="70%" alt="Juez Bot multimodal inference flow">
 </p>
-<p align="center"><em>Figura 3. Etapas de inferencia: validación de evidencia, codificación, construcción del prompt, evaluación por rúbrica, persistencia y confirmación del árbitro.</em></p>
-
-1. **Validación de entrada** — se verifica disponibilidad y tipo de video/imágenes.
-2. **Codificación de medios** — el video se codifica para su transmisión al servicio multimodal.
-3. **Construcción del prompt** — identificación inequívoca de robots, reglas del área e instrucciones de comparación.
-4. **Inferencia multimodal con IA** — Gemini 2.5 Flash evalúa el combate completo.
-5. **Análisis estructurado de la respuesta** — validación por expresiones regulares y rangos.
-6. **Extracción de criterios** — agresividad, daño, control y condición.
-7. **Propuesta de ganador**.
-8. **Persistencia** — en PostgreSQL, con la respuesta original íntegra para trazabilidad.
-9. **Presentación web** del resultado.
-10. **Confirmación del árbitro** — decisión final humana.
-
+<p align="center"><em>Figure 3. Inference stages: evidence validation, encoding, prompt construction, rubric-based evaluation, persistence, and referee confirmation.</em></p>
+1. **Input validation** — checks video/image availability and type.
+2. **Media encoding** — the video is encoded for transmission to the multimodal service.
+3. **Prompt construction** — unambiguous robot identification, area rules, and comparison instructions.
+4. **AI multimodal inference** — Gemini 2.5 Flash evaluates the full match.
+5. **Structured response analysis** — validation via regular expressions and ranges.
+6. **Criteria extraction** — aggressiveness, damage, control, and condition.
+7. **Winner proposal**.
+8. **Persistence** — stored in PostgreSQL, with the full original response for traceability.
+9. **Web presentation** of the result.
+10. **Referee confirmation** — final human decision.
 ---
-
-## 🧩 Tecnologías Utilizadas
-
-| Tecnología | Versión | Aplicación |
+ 
+## 🧩 Technologies Used
+ 
+| Technology | Version | Application |
 |---|---|---|
-| Python | 3.x | Captura, temporización y backend |
-| FastAPI | 0.136.1 | API REST asíncrona |
-| Uvicorn | 0.46.0 | Servidor ASGI |
-| Pydantic | 2.13.4 | Validación de datos |
-| Jinja2 | 3.1.6 | Renderizado de la interfaz |
-| PostgreSQL | 9.4 | Persistencia |
-| psycopg2 | 2.9.12 | Conexión SQL |
-| Gemini | 2.5 Flash | Inferencia multimodal |
-| HTTPX | 0.28.1 | Comunicación entre servicios |
-| M5Stack AtomS3 / Core2 | — | Terminales de operador y módulo de árbitro |
-| ESP-NOW | — | Comunicación inalámbrica de campo |
-| Sphero RVR+ | — | Plataforma móvil de la unidad de captura |
-| FFmpeg | — | Codificación de video (H.264, MP4) |
-| PyQt5 | — | Reloj del juez con comunicación serial |
-| Render | — | Despliegue del backend |
-
+| Python | 3.x | Capture, timing, and backend |
+| FastAPI | 0.136.1 | Asynchronous REST API |
+| Uvicorn | 0.46.0 | ASGI server |
+| Pydantic | 2.13.4 | Data validation |
+| Jinja2 | 3.1.6 | Interface rendering |
+| PostgreSQL | 9.4 | Persistence |
+| psycopg2 | 2.9.12 | SQL connection |
+| Gemini | 2.5 Flash | Multimodal inference |
+| HTTPX | 0.28.1 | Inter-service communication |
+| M5Stack AtomS3 / Core2 | — | Operator terminals and referee module |
+| ESP-NOW | — | Wireless field communication |
+| Sphero RVR+ | — | Mobile platform for the capture unit |
+| FFmpeg | — | Video encoding (H.264, MP4) |
+| PyQt5 | — | Referee clock with serial communication |
+| Render | — | Backend deployment |
+ 
 ---
-
-## 🚀 Funcionalidades Principales
-
-| Funcionalidad | Descripción |
+ 
+## 🚀 Main Features
+ 
+| Feature | Description |
 |---|---|
-| 🎥 Captura móvil | Grabación de combate mediante Sphero RVR+ + Raspberry Pi Zero 2 W + cámara. |
-| 🔴 Control remoto de grabación | Inicio, pausa, reanudación y detención sincronizados con el árbitro. |
-| 🤖 Análisis multimodal | Evaluación de video e imágenes iniciales/finales mediante Gemini 2.5 Flash. |
-| 🥋 Evaluación por rúbrica | Puntuación técnica en agresividad, condición, daño y control. |
-| 🏷️ Identificación de robots | Reconocimiento inequívoco de Robot A / Robot B por nombre e imágenes. |
-| 🖥️ Interfaz web | Registro de robots, carga de evidencia, resultados y verificación técnica. |
-| 🗄️ Historial trazable | Registro completo en PostgreSQL, incluida la respuesta original del modelo. |
-| 📡 Módulos físicos | Terminales AtomS3 y módulo árbitro M5Stack Core2 vía ESP-NOW. |
-| ⏱️ Reloj oficial | Temporizador independiente en PyQt5 con comandos seriales. |
-| 🧑‍⚖️ Árbitro en el bucle | El sistema propone; el árbitro humano confirma o corrige la decisión final. |
-
+| 🎥 Mobile capture | Match recording via Sphero RVR+ + Raspberry Pi Zero 2 W + camera. |
+| 🔴 Remote recording control | Start, pause, resume, and stop, synchronized with the referee. |
+| 🤖 Multimodal analysis | Evaluation of video and initial/final images via Gemini 2.5 Flash. |
+| 🥋 Rubric-based evaluation | Technical scoring on aggressiveness, condition, damage, and control. |
+| 🏷️ Robot identification | Unambiguous recognition of Robot A / Robot B by name and images. |
+| 🖥️ Web interface | Robot registration, evidence upload, results, and technical review. |
+| 🗄️ Traceable history | Full record in PostgreSQL, including the model's original response. |
+| 📡 Physical modules | AtomS3 terminals and M5Stack Core2 referee module via ESP-NOW. |
+| ⏱️ Official clock | Independent timer in PyQt5 with serial commands. |
+| 🧑‍⚖️ Human-in-the-loop | The system proposes; the human referee confirms or corrects the final decision. |
+ 
 ---
-
-## 🚦 Motor de Evaluación
-
-Cada robot se evalúa con un puntaje máximo de **40 puntos**:
-
-| Criterio | Puntaje máximo | Descripción |
+ 
+## 🚦 Evaluation Engine
+ 
+Each robot is evaluated with a maximum score of **40 points**:
+ 
+| Criterion | Max score | Description |
 |---|---:|---|
-| Agresividad | 15 | Iniciativa ofensiva, presión y búsqueda de contacto. |
-| Condición | 5 | Estado físico y funcional al finalizar el combate. |
-| Daño | 10 | Daño visible causado al oponente. |
-| Control | 10 | Dominio de arena, orientación, empuje y posición táctica. |
-
-El ganador se determina por puntaje total; en caso de igualdad se aplica desempate por daño → agresividad → control → condición. El empate solo se considera cuando no hay contacto efectivo ni presión ofensiva clara.
-
+| Aggressiveness | 15 | Offensive initiative, pressure, and pursuit of contact. |
+| Condition | 5 | Physical and functional state at the end of the match. |
+| Damage | 10 | Visible damage inflicted on the opponent. |
+| Control | 10 | Arena dominance, orientation, pushing power, and tactical positioning. |
+ 
+The winner is determined by total score; in case of a tie, the tiebreaker order is damage → aggressiveness → control → condition. A tie is only considered when there is no effective contact or clear offensive pressure.
+ 
 ---
-
-## 📊 Resultados de Validación (IEEE Access)
-
-Validado en dos escenarios: 30 combates históricos del repositorio **BrettZone-NHRL** y 20 combates con decisión de jueces del evento **IEEE Pumabot 2026**.
-
-| Escenario | n | Precisión (Acc.) | IC 95% (Wilson) | Bal. Acc. | Macro F1 | MCC |
+ 
+## 📊 Validation Results (IEEE Access)
+ 
+Validated across two scenarios: 30 historical matches from the **BrettZone-NHRL** repository and 20 matches with judge decisions from the **IEEE Pumabot 2026** event.
+ 
+| Scenario | n | Accuracy (Acc.) | 95% CI (Wilson) | Bal. Acc. | Macro F1 | MCC |
 |---|---:|---:|---|---:|---:|---:|
 | BrettZone–NHRL | 30 | 86.7% | 70.3–94.7% | 86.1% | 86.1% | 0.722 |
 | IEEE Pumabot 2026 | 20 | 90.0% | 69.9–97.2% | 89.0% | 89.0% | 0.780 |
-| **Combinado** | 50 | **88.0%** | 76.2–94.4% | 87.3% | 87.3% | 0.745 |
-
-### 🎯 Matriz de confusión combinada
-
-| | Predicho A | Predicho B |
+| **Combined** | 50 | **88.0%** | 76.2–94.4% | 87.3% | 87.3% | 0.745 |
+ 
+### 🎯 Combined confusion matrix
+ 
+| | Predicted A | Predicted B |
 |---|---:|---:|
-| **Oficial A** | 28 | 3 |
-| **Oficial B** | 3 | 16 |
-
-Los errores fueron simétricos (3 en cada dirección), sin evidencia de sesgo posicional hacia A o B.
-
-### ⚖️ Contribución normalizada de criterios (dataset combinado)
-
-| Criterio | Contribución |
+| **Official A** | 28 | 3 |
+| **Official B** | 3 | 16 |
+ 
+Errors were symmetric (3 in each direction), showing no evidence of positional bias toward A or B.
+ 
+### ⚖️ Normalized criterion contribution (combined dataset)
+ 
+| Criterion | Contribution |
 |---|---:|
 | Control | 33.6% |
-| Agresividad | 32.3% |
-| Daño | 21.7% |
-| Condición | 12.4% |
-
-El margen promedio entre puntajes fue de **14.80 puntos**. Cinco de los seis desacuerdos tuvieron márgenes ≥11 puntos, lo que confirma que un margen amplio **no** debe interpretarse como confianza calibrada — de ahí la importancia de mantener al árbitro en el bucle de decisión.
-
-### 🗳️ Pruebas funcionales end-to-end
-
-| Código | Prueba | Resultado documentado |
+| Aggressiveness | 32.3% |
+| Damage | 21.7% |
+| Condition | 12.4% |
+ 
+The average margin between scores was **14.80 points**. Five of the six disagreements had margins ≥11 points, confirming that a wide margin **should not** be interpreted as calibrated confidence — hence the importance of keeping the referee in the decision loop.
+ 
+### 🗳️ End-to-end functional tests
+ 
+| Code | Test | Documented result |
 |---|---|---|
-| F1 | Señalización de operadores | Estados y alertas mostrados en el M5Stack Core2 |
-| F2 | Control del temporizador | Comandos seriales interpretados correctamente por el reloj PyQt5 |
-| F3 | Sincronización de captura | Grabación (inicio/pausa/reanuda/detiene) verificada |
-| F4 | Transferencia de evidencia | Videos e imágenes recibidos sin errores críticos |
-| F5 | Inferencia multimodal | Respuesta con ganador y puntajes técnicos recibida y mostrada |
-| F6 | Persistencia e historial | Resultados almacenados en PostgreSQL y consultables |
-| F7 | Despliegue en evento | Operación conjunta de módulos físicos y lógicos durante IEEE Pumabot 2026 |
-
+| F1 | Operator signaling | States and alerts displayed on the M5Stack Core2 |
+| F2 | Timer control | Serial commands correctly interpreted by the PyQt5 clock |
+| F3 | Capture synchronization | Recording (start/pause/resume/stop) verified |
+| F4 | Evidence transfer | Videos and images received without critical errors |
+| F5 | Multimodal inference | Response with winner and technical scores received and displayed |
+| F6 | Persistence and history | Results stored in PostgreSQL and queryable |
+| F7 | Event deployment | Joint operation of physical and logical modules during IEEE Pumabot 2026 |
+ 
 ---
-
-## 📡 Comunicación entre Módulos
-
-| Origen | Destino | Canal | Datos | Propósito |
+ 
+## 📡 Communication Between Modules
+ 
+| Source | Destination | Channel | Data | Purpose |
 |---|---|---|---|---|
-| Terminales A/B | Módulo de árbitro | ESP-NOW | Códigos de listo, alerta o rendición | Coordinar estado del competidor y solicitar intervención |
-| Módulo de árbitro | Temporizador oficial | Serial | Inicio, pausa, reanudación, detención | Controlar el tiempo reglamentario desde el dispositivo portátil |
-| Backend | Juez Bot | HTTP GET | Estados de grabación y pausa | Sincronizar captura con acciones del árbitro |
-| Juez Bot | Backend | HTTP multipart | Video MP4 y metadatos | Transferir evidencia audiovisual |
-| Aplicación web | Backend | HTTP multipart | Identificadores, video, imágenes iniciales/finales | Registrar el combate y solicitar inferencia |
-| Backend | Servicio de IA | HTTPS / JSON | Instrucciones y archivos codificados | Ejecutar el análisis multimodal |
-| Backend | PostgreSQL | SQL | Evidencia, puntajes, tiempos, estados | Garantizar persistencia y trazabilidad |
-| Backend | Aplicación web | HTTP / JSON | Resultado, explicación, historial | Apoyar revisión y confirmación del árbitro |
-
+| Terminals A/B | Referee module | ESP-NOW | Ready, alert, or submission codes | Coordinate competitor status and request intervention |
+| Referee module | Official timer | Serial | Start, pause, resume, stop | Control regulation time from the portable device |
+| Backend | Juez Bot | HTTP GET | Recording and pause states | Synchronize capture with referee actions |
+| Juez Bot | Backend | HTTP multipart | MP4 video and metadata | Transfer audiovisual evidence |
+| Web application | Backend | HTTP multipart | Identifiers, video, initial/final images | Register the match and request inference |
+| Backend | AI service | HTTPS / JSON | Instructions and encoded files | Run multimodal analysis |
+| Backend | PostgreSQL | SQL | Evidence, scores, times, states | Ensure persistence and traceability |
+| Backend | Web application | HTTP / JSON | Result, explanation, history | Support review and referee confirmation |
+ 
 ---
-
-## 🔄 Secuencia Operativa
-
-1. Cada operador confirma que su robot está listo.
-2. Cuando ambos estados son válidos, el árbitro inicia el temporizador y la grabación.
-3. Durante el combate, los terminales pueden enviar alertas; el árbitro puede pausar o detener.
-4. Al finalizar, Juez Bot transfiere el video y se agregan las imágenes finales disponibles.
-5. El backend valida la evidencia y construye la solicitud multimodal.
-6. Si hay KO o rendición confirmados, se aplica la **regla directa** (sin pasar por el modelo de IA).
-7. Si el combate llega al límite de tiempo, se ejecuta el **análisis multimodal**.
-8. El sistema extrae el ganador propuesto y las puntuaciones por criterio.
-9. El resultado se almacena en PostgreSQL junto con la respuesta original del modelo.
-10. La interfaz presenta el resultado; el árbitro confirma o corrige la decisión final.
-
-### 🔁 Modelo de estados del combate
-
+ 
+## 🔄 Operational Sequence
+ 
+1. Each operator confirms that their robot is ready.
+2. Once both states are valid, the referee starts the timer and recording.
+3. During the match, terminals can send alerts; the referee can pause or stop.
+4. At the end, Juez Bot transfers the video and any available final images are added.
+5. The backend validates the evidence and builds the multimodal request.
+6. If KO or submission is confirmed, the **direct rule** applies (bypassing the AI model).
+7. If the match reaches the time limit, **multimodal analysis** is executed.
+8. The system extracts the proposed winner and per-criterion scores.
+9. The result is stored in PostgreSQL along with the model's original response.
+10. The interface presents the result; the referee confirms or corrects the final decision.
+### 🔁 Match state model
+ 
 `waiting` → `ready` → `recording` ⇄ `paused` → `finished` → `processing` → `result available` → `validated`
-
+ 
 ---
-
+ 
 ## 🌐 API Endpoints
-
-| Endpoint | Método | Descripción |
+ 
+| Endpoint | Method | Description |
 |---|---|---|
-| `/` | GET | Muestra la interfaz principal. |
-| `/health` | GET | Verifica el estado del backend. |
-| `/upload` | POST | Sube el video grabado por Juez Bot. |
-| `/analyze` | POST | Analiza video e imágenes con IA multimodal. |
-| `/historial` | GET | Consulta los últimos resultados almacenados. |
-| `/check_status` | GET | Verifica si existe un video disponible para analizar. |
-| `/start_recording` | GET | Inicia la grabación remota. |
-| `/pause_recording` | GET | Pausa la grabación remota. |
-| `/resume_recording` | GET | Reanuda la grabación remota. |
-| `/stop_recording` | GET | Detiene la grabación remota. |
-| `/recording_status` | GET | Consulta el estado actual de grabación. |
-
+| `/` | GET | Displays the main interface. |
+| `/health` | GET | Checks the backend status. |
+| `/upload` | POST | Uploads the video recorded by Juez Bot. |
+| `/analyze` | POST | Analyzes video and images with multimodal AI. |
+| `/historial` | GET | Queries the most recent stored results. |
+| `/check_status` | GET | Checks whether a video is available for analysis. |
+| `/start_recording` | GET | Starts remote recording. |
+| `/pause_recording` | GET | Pauses remote recording. |
+| `/resume_recording` | GET | Resumes remote recording. |
+| `/stop_recording` | GET | Stops remote recording. |
+| `/recording_status` | GET | Queries the current recording status. |
+ 
 ---
-
-## ⚙️ Instalación
-
+ 
+## ⚙️ Installation
+ 
 ```bash
 git clone https://github.com/PatrickZ29/RobotVisionIA.git
 cd RobotVisionIA
 python -m venv venv
 ```
-
-En Windows:
+ 
+On Windows:
 ```bash
 venv\Scripts\activate
 ```
-
-En Linux o macOS:
+ 
+On Linux or macOS:
 ```bash
 source venv/bin/activate
 ```
-
+ 
 ```bash
 pip install -r requirements.txt
 ```
-
+ 
 ---
-
-## 🔐 Configuración de Variables de Entorno
-
+ 
+## 🔐 Environment Variable Configuration
+ 
 ```env
-GEMINI_API_KEY=coloca_tu_api_key_aqui
+GEMINI_API_KEY=place_your_api_key_here
 GEMINI_MODEL=gemini-2.5-flash
-
+ 
 VIDEO_FOLDER=videos
-
+ 
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=robot_ai
 DB_USER=postgres
 DB_PASSWORD=1234
 ```
-
-Para despliegue en Render o servicios similares:
+ 
+For deployment on Render or similar services:
 ```env
-DATABASE_URL=postgresql://usuario:password@host:5432/base_datos
+DATABASE_URL=postgresql://user:password@host:5432/database_name
 ```
-
-> ⚠️ No se recomienda subir archivos `.env` ni claves privadas al repositorio.
-
+ 
+> ⚠️ It is not recommended to upload `.env` files or private keys to the repository.
+ 
 ---
-
-## ▶️ Ejecución del Backend
-
+ 
+## ▶️ Running the Backend
+ 
 ```bash
 uvicorn main:app --reload
 ```
-
+ 
 ```text
 http://localhost:8000
 http://localhost:8000/health
 ```
-
+ 
 ---
-
-## ☁️ Despliegue
-
+ 
+## ☁️ Deployment
+ 
 ```bash
 uvicorn main:app --host 0.0.0.0 --port $PORT
 ```
-
+ 
 ```env
-GEMINI_API_KEY=clave_de_gemini
+GEMINI_API_KEY=gemini_key
 GEMINI_MODEL=gemini-2.5-flash
-DATABASE_URL=url_de_postgresql
+DATABASE_URL=postgresql_url
 VIDEO_FOLDER=videos
 ```
-
+ 
 ---
-
-## 🛡️ Seguridad
-
+ 
+## 🛡️ Security
+ 
 ```gitignore
 venv/
 .env
@@ -330,35 +319,33 @@ videos/
 .DS_Store
 .api_keys.py
 ```
-
-- No subir `.env` ni claves de Gemini al repositorio.
-- No incluir credenciales reales en `config.py`.
-- Mantener `videos/`, `uploads/` y archivos temporales fuera de Git.
-
+ 
+- Do not upload `.env` files or Gemini keys to the repository.
+- Do not include real credentials in `config.py`.
+- Keep `videos/`, `uploads/`, and temporary files out of Git.
 ---
-
-## 🌱 Limitaciones y Trabajo Futuro
-
-- [ ] Cámaras sincronizadas para asociar cada criterio con evidencia temporal específica.
-- [ ] Inferencia repetida para medir estabilidad y calibración de confianza.
-- [ ] Comparación entre modelos y prompts (arbitraje por comité, ej. estilo EvalCouncil).
-- [ ] Inferencia parcial en el borde (*edge*) para reducir dependencia de Internet.
-- [ ] Esquemas JSON validados para respuestas del modelo.
-- [ ] Evaluación de disponibilidad, pérdida de paquetes ESP-NOW y costo por combate.
-- [ ] Mecanismos de apelación y revisión comprensibles para competidores y organizadores.
-
+ 
+## 🌱 Limitations and Future Work
+ 
+- [ ] Synchronized cameras to associate each criterion with specific temporal evidence.
+- [ ] Repeated inference to measure stability and confidence calibration.
+- [ ] Comparison across models and prompts (committee-style arbitration, e.g., EvalCouncil style).
+- [ ] Partial edge inference to reduce dependence on Internet connectivity.
+- [ ] Validated JSON schemas for model responses.
+- [ ] Evaluation of availability, ESP-NOW packet loss, and cost per match.
+- [ ] Understandable appeal and review mechanisms for competitors and organizers.
 ---
-
-## 👤 Autor
-
+ 
+## 👤 Author
+ 
 **Patrick Neil Zamora Lascano**
 Universidad Tecnológica Indoamérica
-Carrera de Ingeniería en Tecnologías de la Información
-
+Information Technology Engineering Program
+ 
 ---
-
-## 📄 Licencia
-
-Este proyecto fue desarrollado con fines académicos como parte del trabajo de titulación relacionado con el sistema inteligente de arbitraje para robótica de combate, validado durante el evento **IEEE Pumabot 2026**.
-
-⭐ Proyecto académico de IA multimodal aplicada, IoT y arbitraje deportivo inteligente
+ 
+## 📄 License
+ 
+This project was developed for academic purposes as part of the degree thesis related to the intelligent refereeing system for combat robotics, validated during the **IEEE Pumabot 2026** event.
+ 
+⭐ Academic project in applied multimodal AI, IoT, and intelligent sports refereeing
